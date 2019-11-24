@@ -1,0 +1,55 @@
+import requests
+from bs4 import BeautifulSoup
+import bs4
+import xlwt
+
+url = "http://cn.morningstar.com/quickrank/default.aspx"
+try:
+    fund = requests.get(url,timeout = 30)
+    fund.raise_for_status()
+    fund.encoding = fund.apparent_encoding
+    #print(fund.text)
+except:
+    print("scrap failed")
+    
+soup = BeautifulSoup(fund.text,"html.parser")
+
+ulist = []
+urllist = []
+for tr in soup.find_all('table'):
+    if isinstance(tr,bs4.element.Tag):
+       tds = tr('td')
+for i in range(0,len(tds)):
+    if tds[i].string!= None:
+        ulist.append(tds[i].string)
+
+i = 2
+while i <= len(tds):
+    try:
+        spe = tds[i].a['href']
+        urllist.append("http://cn.morningstar.com" + spe)
+    except IndexError:
+        pass
+    i = i+11
+    
+#-----------------------------------------------
+all above is right
+#-----------------------------------------------
+
+print("{:^10}\t{:^6}\t{:^10}\t{:^10}".format("代码", "基金名称", "基金分类", "网址"))
+i=0
+for ulist in ulist:
+    j = 0
+    for ulist in ulist:
+        print(ulist[i], ulist[i+1],ulist[i+2],ulist[i+3],ulist[i+4])
+        i = i+5
+        
+#for i in len(urllist):
+#    try:
+fund_spe = requests.get(urllist[0],timeout = 30)
+#        fund_spe.raise_for_status()
+#        fund_spe.encoding = fund.apparent_encoding
+#        #print(fund.text)
+#    except:
+#        print("scrap failed")
+soup_spe[0] = BeautifulSoup(fund_spe.text,"html.parser")
